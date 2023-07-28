@@ -232,5 +232,35 @@ print(f"New shape: {x_permuted.shape}") # [color_channels, height, width]
 
 ################
 
+# Indexing (selecting data from tensors)
 
+# Create a tensor
+x = torch.arange(1, 10).reshape(1, 3, 3)
+print(x, x.shape)
+
+# Let's index on our new tensor
+print(x[0])
+
+# Let's index on the middle bracket (dim=1)
+print(x[0][0])
+
+# Let's index on the most inner bracket (last dimension)
+print(x[0][0][0])
+
+# ":" is uses for selecting all of a target dimension
+print(x[:, 0])
+
+# Get all values of 0th and 1st dimensions but only index 1 of 2nd dimension
+print(x[:, :, 1])
+# Get all values of the 0 dimension but only the 1 index value of 1st and 2nd dimension
+print(x[:, 1, 1])
+# Get index 0 of 0th and 1st dimension and all values of 2nd dimension
+print(x[0, 0, :])
+
+# Index on x to return 9
+print(x[0][2][2])
+# Index on x to return 3, 6, 9
+print(x[:, :, 2])
+
+################
 
