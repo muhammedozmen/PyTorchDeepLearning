@@ -146,3 +146,37 @@ print(f"\nOutput shape: {output.shape}")
 
 ################
 
+# Tensor aggregation (Finding the min, max, mean, sum, etc)
+
+# Create a tensor
+x = torch.arange(1, 100, 10)
+print(x)
+
+# Find the min
+print(torch.min(x))
+print(x.min())
+
+# Find the max
+print(torch.max(x))
+print(x.max())
+
+# Find the mean - note: the torch.mean() function requires a tensor of float32 datatype to work
+print(torch.mean(x.type(torch.float32))) # It must be converted to float32 datatype, or we get data type error(long data type)
+print(x.type(torch.float32).mean())
+
+# Find the sum
+print(torch.sum(x))
+print(x.sum())
+
+# Find the position in tensor that has the minimum value with argmin() -> returns index position of target tensor where the minimum value occurs
+print(torch.argmin(x))
+print(x.argmin())
+
+# Find the position in tensor that has the maximum value with argmax() -> returns index position of target tensor where the maximum value occurs
+print(torch.argmax(x))
+print(x.argmax())
+
+################
+
+
+
