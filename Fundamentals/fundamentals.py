@@ -94,5 +94,55 @@ print(float_16_tensor * float_32_tensor)
 
 ################
 
+# Tensor Attributes
 
+# Create a tensor
+some_tensor = torch.rand(3, 4)
+
+# Find out details about some_tensor
+print(some_tensor)
+print(f"Datatype of tensor: {some_tensor.dtype}")
+print(f"Shape of tensor: {some_tensor.shape}")
+print(f"Device tensor is on: {some_tensor.device}")
+
+################
+
+# Tensor Operations
+
+# Create a tensor
+tensor = torch.tensor([1, 2, 3])
+print(tensor + 10)
+print(tensor * 10)
+print(tensor - 10)
+print(tensor / 10)
+
+# Try out PyTorch built-in operations
+print(torch.mul(tensor, 10))
+
+# Element wise multiplication
+print(tensor, "*", tensor)
+print(f"Equals: {tensor * tensor}")
+
+# Matrix multiplication (dot product)
+print(torch.matmul(tensor, tensor))
+
+# Tensor transpose to fix shape errors
+tensor_A = torch.tensor([[1, 2],  # Shape of 3x2
+                        [3, 4],
+                        [5, 6]])
+
+tensor_B = torch.tensor([[7, 10], # Shape of 3x2
+                        [8, 11],
+                        [9, 12]])
+
+# The matrix multiplication operation works when tensor_B is transposed (2x3)
+print(f"Original shapes: tensor_A = {tensor_A.shape}, tensor_B = {tensor_B.shape}")
+print(f"New shapes: tensor_A = {tensor_A.shape}, tensor_B = {tensor_B.T.shape}")
+print(f"Multiplying: {tensor_A.shape} @ {tensor_B.T.shape}")
+print("Output: \n")
+output = torch.matmul(tensor_A, tensor_B.T)
+print(output)
+print(f"\nOutput shape: {output.shape}")
+
+################
 
