@@ -178,5 +178,59 @@ print(x.argmax())
 
 ################
 
+# Reshaping, stacking, squeezing and unsqueezing tensors
+
+# Create a tensor
+x = torch.arange(1., 10.)
+print(x, x.shape)
+
+# Add an extra dimension
+x_reshaped = x.reshape(1, 9)
+x_reshaped_2 = x.reshape(9, 1) 
+print(x_reshaped, x_reshaped.shape)
+print(x_reshaped_2, x_reshaped_2.shape)
+
+# Change the view
+z = x.view(1, 9)
+print(z, z.shape)
+# Changing z changes x (because a view of a tensor shares the same memory as the original input)
+z[:, 0] = 5
+print(z, x)
+
+# Stack tensors on top of each other
+x_stack = torch.stack([x, x, x, x], dim=0)
+x_stack_dim1 = torch.stack([x, x, x, x], dim=1)
+print(x_stack)
+print(x_stack_dim1)
+
+# torch.squeeze() - removes all single dimensions from a target tensor
+print(f"Previous tensor: {x_reshaped}")
+print(f"Previous shape: {x_reshaped.shape}")
+# Remove extra dimensions from x_reshaped
+x_squeezed = x_reshaped.squeeze()
+print(f"\nNew tensor: {x_squeezed}")
+print(f"New shape: {x_squeezed.shape}")
+
+# torch.unsqueeze() - adds a single dimension to a target tensor at a spesific dimension
+print(f"Previous target: {x_squeezed}")
+print(f"Previous shape: {x_squeezed.shape}")
+# Add an extra dimension with unsqueeze
+x_unsqueezed = x_squeezed.unsqueeze(dim=0)
+print(f"\nNew tensor: {x_unsqueezed}")
+print(f"New shape: {x_unsqueezed.shape}")
+x_unsqueezed_dim1 = x_squeezed.unsqueeze(dim=1)
+print(f"\nNew tensor with dim=1: {x_unsqueezed_dim1}")
+print(f"New shape with dim=1: {x_unsqueezed_dim1.shape}")
+
+# torch.permute() - rearranges the dimensions of a target tensor in a specified order
+x_original = torch.rand(size=(224, 224, 3)) # Common representation of image data = [height, width, color_channels]
+
+# Permute the original tensor to rearrange the axis (or dim) order
+x_permuted = x_original.permute(2, 0, 1) # shifts axis 0->1, 1->2, 2->0
+print(f"Previous shape: {x_original.shape}") # [height, width, color_channels]
+print(f"New shape: {x_permuted.shape}") # [color_channels, height, width]
+
+################
+
 
 
