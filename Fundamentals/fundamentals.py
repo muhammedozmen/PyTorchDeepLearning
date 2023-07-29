@@ -311,3 +311,38 @@ print(random_tensor_C == random_tensor_D)
 
 ################
 
+# Running tensors on PyTorch objects on the GPUs (and making faster computations)
+
+# Check up GPU is active or not
+print(torch.cuda.is_available())
+
+# Setup device agnostic code
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
+
+# Count number of devices
+print(torch.cuda.device_count())
+
+
+# Putting tensors (and models) on the GPU
+
+# Create a tensor (default on the CPU)
+tensor = torch.tensor([1, 2, 3], device="cpu") # by default its been creating on the CPU
+
+# Tensor not on GPU
+print(tensor, tensor.device)
+
+# Move tensor to GPU (if available)
+tensor_on_gpu = tensor.to(device)
+print(tensor_on_gpu)
+
+
+# Moving tensors back to the CPU
+
+# If tensor is on GPU, can't transform it to NumPy
+# To fix the GPU tensor with NumPy issue, we can first set it to the CPU
+tensor_back_on_cpu = tensor_on_gpu.cpu().numpy()
+print(tensor_back_on_cpu)
+print(tensor_on_gpu)
+
+################
