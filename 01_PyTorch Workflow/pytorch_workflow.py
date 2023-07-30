@@ -56,5 +56,6 @@ def plot_predictions(train_data = X_train,
 
     # Show the legend
     plt.legend(prop={"size": 14});
+    
 
 
