@@ -104,3 +104,18 @@ print(y_test)
 plot_predictions(predictions=y_preds)
 
 
+## Training a model
+
+print(list(model_0.parameters()))
+
+# Check out our model's parameters (a parameter is a value that the model sets itself)
+print(model_0.state_dict())
+
+# Setup a loss function
+loss_fn = nn.L1Loss()
+
+# Setup an optimizer (stochastic gradient descent)
+optimizer = torch.optim.SGD(params=model_0.parameters(),
+                            lr=0.01)                            # <- lr = learning rate = possibly the most important learning hyperparameter you can set
+
+
