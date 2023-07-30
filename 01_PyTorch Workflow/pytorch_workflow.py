@@ -59,4 +59,17 @@ def plot_predictions(train_data=X_train,
 
 plot_predictions()
 
+## Building a model
+
+# Create a linear regression model class
+class LinearRegressionModel(nn.Module): # <- almost everything in PyTorch inherits from nn.Module
+    def __init__(self):
+        super().__init__()
+        self.weights = nn.Parameter(torch.randn(1,
+                                               requires_grad=True,
+                                               dtype=torch.float))
+        self.bias = nn.Parameter(torch.randn(1,
+                                             requires_grad=True,
+                                             dtype=torch.float))
+
 
