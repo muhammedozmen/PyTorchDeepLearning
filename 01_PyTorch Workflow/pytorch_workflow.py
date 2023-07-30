@@ -66,14 +66,41 @@ plot_predictions()
 class LinearRegressionModel(nn.Module): # <- almost everything in PyTorch inherits from nn.Module
     def __init__(self):
         super().__init__()
-        self.weights = nn.Parameter(torch.randn(1,
-                                               requires_grad=True,
-                                               dtype=torch.float))
-        self.bias = nn.Parameter(torch.randn(1,
-                                             requires_grad=True,
-                                             dtype=torch.float))
+        self.weights = nn.Parameter(torch.randn(1,                    # <- start with a random weight and try to adjust it to the ideal weight
+                                               requires_grad=True,    # <- can this parameter be updated via gradient descent?
+                                               dtype=torch.float))    # <- PyTorch loves the datatype torch.float32
+        self.bias = nn.Parameter(torch.randn(1,                       # <- start with a random bias and try to adjust it to the ideal bias
+                                             requires_grad=True,      # <- can this parameter be updated via gradient descent?
+                                             dtype=torch.float))      # <- PyTorch loves the datatype torch.float32
         
-        # Forward method to define the computation in the model
-        def forward(self, x: torch.Tensor) -> torch.Tensor: # <- "x" is input data 
-            return self.weights * x + self.bias # this is the linear regression formula
+    # Forward method to define the computation in the model
+    def forward(self, x: torch.Tensor) -> torch.Tensor:               # <- "x" is input data 
+        return self.weights * x + self.bias                           # this is the linear regression formula
+        
+
+## Checking the contents of our PyTorch model
+
+# Create a random seed
+torch.manual_seed(42)
+
+# Create an instance of the model (this is a subclass of nn.Module)
+model_0 = LinearRegressionModel()
+
+# Check out the parameters
+print(list(model_0.parameters()))
+
+# List named parameters
+print(model_0.state_dict())
+
+
+## Making prediction using 'torch.inference_mode()'
+
+# Make predictions with model
+with torch.inference_mode():
+    y_preds = model_0(X_test)
+
+print(y_preds)
+print(y_test)
+plot_predictions(predictions=y_preds)
+
 
