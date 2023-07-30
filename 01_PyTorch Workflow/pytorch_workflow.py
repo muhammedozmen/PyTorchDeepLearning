@@ -59,6 +59,7 @@ def plot_predictions(train_data=X_train,
 
 plot_predictions()
 
+
 ## Building a model
 
 # Create a linear regression model class
@@ -71,5 +72,8 @@ class LinearRegressionModel(nn.Module): # <- almost everything in PyTorch inheri
         self.bias = nn.Parameter(torch.randn(1,
                                              requires_grad=True,
                                              dtype=torch.float))
-
+        
+        # Forward method to define the computation in the model
+        def forward(self, x: torch.Tensor) -> torch.Tensor: # <- "x" is input data 
+            return self.weights * x + self.bias # this is the linear regression formula
 
