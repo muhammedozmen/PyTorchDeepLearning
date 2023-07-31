@@ -206,3 +206,30 @@ print(f"Saving model to: {MODEL_SAVE_PATH}")
 torch.save(obj=model_0.state_dict(), f=MODEL_SAVE_PATH)
 
 
+## Loading a model in PyTorch
+
+# To load in a saved state_dict, we have to instantiate a new instance of our model class
+loaded_model_0 = LinearRegressionModel()
+
+# Load the saved state_dict of model_0 (this will update the new instance with updated parameters)
+loaded_model_0.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
+
+# Make some predictions with our loaded model
+loaded_model_0.eval()
+with torch.inference_mode():
+    loaded_model_preds = loaded_model_0(X_test)
+
+print(loaded_model_preds)
+
+# Make some models preds
+model_0.eval()
+with torch.inference_mode():
+    y_preds = model_0(X_test)
+
+print(y_preds)
+
+# Compare loaded model preds with original model preds
+print(y_preds == loaded_model_preds)
+
+
+
