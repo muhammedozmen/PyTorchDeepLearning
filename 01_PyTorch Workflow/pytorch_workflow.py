@@ -132,7 +132,6 @@ for epoch in range(epochs):
 
     # 1. Forward pass
     y_pred = model_0(X_train)
-
     # 2. Calculate the loss
     loss = loss_fn(y_pred, y_train)
 
@@ -146,6 +145,7 @@ for epoch in range(epochs):
     # 5. Step the optimizer (perform gradient descent)
     optimizer.step()                    # <- by default how the optimizer changes will accumulate through the loop so, we have to zero to them above in step 3 for the next iteration of the loop
 
+    ## Testing
     model_0.eval()                      # -< turns off gradient tracking
 
 
