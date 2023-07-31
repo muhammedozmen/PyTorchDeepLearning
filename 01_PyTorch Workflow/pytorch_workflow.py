@@ -122,7 +122,7 @@ optimizer = torch.optim.SGD(params=model_0.parameters(),
 ## Building a training loop (and a testing loop) in PyTorch
 
 # An epoch is one through the data ( this is a hyperparameter because we've set it ourselves)
-epochs = 1
+epochs = 100
 
 ## Training
 # 0. Loop through the data
@@ -134,7 +134,7 @@ for epoch in range(epochs):
     y_pred = model_0(X_train)
     # 2. Calculate the loss
     loss = loss_fn(y_pred, y_train)
-
+    
     # 3. Optimizer zero grad
     optimizer.zero_grad()
 
@@ -146,6 +146,24 @@ for epoch in range(epochs):
     optimizer.step()                    # <- by default how the optimizer changes will accumulate through the loop so, we have to zero to them above in step 3 for the next iteration of the loop
 
     ## Testing
-    model_0.eval()                      # -< turns off gradient tracking
+    model_0.eval()                      # <- turns off different settings in the model not needed for evaluation/testing (dropout/batch norm layers)
+    with torch.inference_mode():        # <- turns off gradient tracking & a couple more things behind the scenes (torch.no_grad() is same function)
+        # 1. Do the forward pass
+        test_pred = model_0(X_test)
+
+        # 2. Calculate the loss
+        test_loss = loss_fn(test_pred, y_test)
+
+    # Print out what's happening
+    if epoch % 10 == 0:
+        print(f"Epoch: {epoch} | Loss: {loss} | Test loss: {test_loss}")
+        # Print out model state_dict()
+        print(model_0.state_dict())
+    
+with torch.inference_mode():
+    y_preds_new = model_0(X_test)
+
+plot_predictions(predictions=y_preds)
+plot_predictions(predictions=y_preds_new)
 
 
