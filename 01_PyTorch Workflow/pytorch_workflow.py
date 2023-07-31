@@ -119,3 +119,33 @@ optimizer = torch.optim.SGD(params=model_0.parameters(),
                             lr=0.01)                            # <- lr = learning rate = possibly the most important learning hyperparameter you can set
 
 
+## Building a training loop (and a testing loop) in PyTorch
+
+# An epoch is one through the data ( this is a hyperparameter because we've set it ourselves)
+epochs = 1
+
+## Training
+# 0. Loop through the data
+for epoch in range(epochs):
+    # Set the model to training mode
+    model_0.train()                    # <- train mode in PyTorch sets all parameters that require gradients to require gradients
+
+    # 1. Forward pass
+    y_pred = model_0(X_train)
+
+    # 2. Calculate the loss
+    loss = loss_fn(y_pred, y_train)
+
+    # 3. Optimizer zero grad
+    optimizer.zero_grad()
+
+    # 4. Perform backpropagation on the loss with respect to the parameters of the model
+    
+    loss.backward()
+
+    # 5. Step the optimizer (perform gradient descent)
+    optimizer.step()                    # <- by default how the optimizer changes will accumulate through the loop so, we have to zero to them above in step 3 for the next iteration of the loop
+
+    model_0.eval()                      # -< turns off gradient tracking
+
+
