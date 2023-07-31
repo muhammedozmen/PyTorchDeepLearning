@@ -1,6 +1,7 @@
 import torch
 from torch import nn   # nn contains all of PyTorch's building blocks for neural networks
 import matplotlib.pyplot as plt
+import numpy as np
 
 ## Data (preparing and loading)
 
@@ -122,7 +123,12 @@ optimizer = torch.optim.SGD(params=model_0.parameters(),
 ## Building a training loop (and a testing loop) in PyTorch
 
 # An epoch is one through the data ( this is a hyperparameter because we've set it ourselves)
-epochs = 100
+epochs = 200
+
+# Track different values
+epoch_count = []
+loss_values = []
+test_loss_values = []
 
 ## Training
 # 0. Loop through the data
@@ -156,6 +162,9 @@ for epoch in range(epochs):
 
     # Print out what's happening
     if epoch % 10 == 0:
+        epoch_count.append(epoch)
+        loss_values.append(loss)
+        test_loss_values.append(test_loss)
         print(f"Epoch: {epoch} | Loss: {loss} | Test loss: {test_loss}")
         # Print out model state_dict()
         print(model_0.state_dict())
@@ -165,5 +174,18 @@ with torch.inference_mode():
 
 plot_predictions(predictions=y_preds)
 plot_predictions(predictions=y_preds_new)
+
+print(loss_values)
+print(test_loss_values)
+
+# Plot the loss curves
+plt.plot(epoch_count, np.array(torch.tensor(loss_values).numpy()) , label="Train loss")
+plt.plot(epoch_count, test_loss_values, label="Test loss")
+plt.title("Training and test loss curves")
+plt.ylabel("Loss")
+plt.xlabel("Epochs")
+plt.legend()
+plt.show()
+
 
 
