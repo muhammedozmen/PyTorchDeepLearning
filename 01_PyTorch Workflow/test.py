@@ -23,6 +23,8 @@ step = 0.02
 # Create X and y (features and labels)
 X = torch.arange(start, end, step). unsqueeze(dim=1) # without unsqueeze, errors will pop up
 y = weight * X + bias
+print()
+print()
 print("X and y values:")
 print(X[:10], y[:10])
 
@@ -30,6 +32,8 @@ print(X[:10], y[:10])
 train_split = int(0.8 * len(X))
 X_train, y_train = X[:train_split], y[:train_split]
 X_test, y_test = X[train_split:], y[train_split:]
+print()
+print()
 print("Samples must be 40 training samples and 10 testing samples.")
 print(len(X_train), len(y_train), len(X_test), len(y_test))
 
@@ -65,6 +69,24 @@ plot_predictions(X_train, y_train, X_test, y_test)
 
 
 ### 2. Building a PyTorch Linear Model
+
+# Create a linear model by subclassing nn.Module
+class LinearRegressionModelV2(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Use nn.Linear() for creating the model parameters / also called as; linear transform, probing layer, fully connected layer, dense layer
+        self.linear_layer = nn.Linear(in_features=1, out_features=1)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.linear_layer(x)
+    
+# Set the manual seed
+torch.manual_seed(42)
+model_1 = LinearRegressionModelV2()
+print()
+print()
+print("Printing the model and state dict:")
+print(model_1, model_1.state_dict())
 
 
 
