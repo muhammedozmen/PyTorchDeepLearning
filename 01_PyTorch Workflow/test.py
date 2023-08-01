@@ -88,6 +88,139 @@ print()
 print("Printing the model and state dict:")
 print(model_1, model_1.state_dict())
 
+# Check the model current device
+print()
+print()
+print(next(model_1.parameters()).device)  # <- Firstly its on the CPU
+
+# Set the model to use the target device
+model_1.to(device)
+print()
+print()
+print(next(model_1.parameters()).device)  # <- Now, its on the GPU
+print()
+print()
+
+
+
+### 3. Training
+
+# Setup loss function
+loss_fn = nn.L1Loss() # same as MAE
+
+# Setup our optimizer
+optimizer = torch.optim.SGD(params=model_1.parameters(), lr=0.01)
+
+# Let's write a training loop
+torch.manual_seed(42)
+
+epochs = 200
+
+# Put data on the target device (device agnostic code for data)
+X_train = X_train.to(device)
+y_train = y_train.to(device)
+X_test = X_test.to(device)
+y_test = y_test.to(device)
+
+for epoch in range(epochs):
+    model_1.train()
+
+    # 1. Forward pass
+    y_pred = model_1(X_train)
+
+    # 2. Calculate the loss
+    loss = loss_fn(y_pred, y_train)
+
+    # 3. Optimizer zero grad
+    optimizer.zero_grad()
+
+    # 4. Perform backpropagation
+    loss.backward()
+
+    # 5. Optimizer step
+    optimizer.step()
+
+    # 6. Testing
+    model_1.eval()
+    with torch.inference_mode():
+        test_pred = model_1(X_test)
+
+        test_loss = loss_fn(test_pred, y_test)
+
+    # 7. Print out what's happening
+    if epoch % 10 == 0:
+        print(f"Epoch: {epoch} | Loss: {loss} | Test loss: {test_loss}")
+
+
+### 4. Making and evaluating predictions
+
+# Turn the model into evaluation mode
+model_1.eval()
+
+# Make predictions on the test data
+with torch.inference_mode():
+    y_preds = model_1(X_test)
+
+# Check out our model predictions visually
+plot_predictions(predictions=y_preds.cpu())
+
+
+### 5. Saving & loading a trained model
+
+from pathlib import Path
+
+# 1. Create models directory
+MODEL_PATH = Path("models")
+MODEL_PATH.mkdir(parents=True, exist_ok=True)
+
+# 2. Create model save path
+MODEL_NAME = "01_pytorch_workflow_model_1.pth"
+MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+
+# 3. Save the model state dict
+print()
+print()
+print("Model state dict:")
+print(model_1.state_dict())
+print()
+print()
+print(f"Saving model to: {MODEL_SAVE_PATH}")
+torch.save(obj=model_1.state_dict(), f=MODEL_SAVE_PATH)
+
+
+# Load a PyTorch model
+
+# Create a new instance of linear regression model V2
+loaded_model_1 = LinearRegressionModelV2()
+
+# Load the saved model_1 state_dict
+loaded_model_1.load_state_dict(torch.load(MODEL_SAVE_PATH))
+
+# Put the loaded model to device
+loaded_model_1.to(device)
+
+# Loaded model device check
+print()
+print()
+print("Loaded model device:")
+print(next(loaded_model_1.parameters()).device)
+
+# Loaded model state dict check
+print()
+print()
+print("Loaded model state dict:")
+print(loaded_model_1.state_dict())
+
+# Evaluate the loaded model
+loaded_model_1.eval()
+with torch.inference_mode():
+    loaded_model_1_preds = loaded_model_1(X_test)
+
+print()
+print()
+print("Checking the actual model and loaded model equality:")
+print(y_preds == loaded_model_1_preds)
+
 
 
 
