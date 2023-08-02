@@ -71,3 +71,24 @@ from torch import nn
 
 # Make device agnostic code
 device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
+
+# 1. Construct a model that subclasses nn.Module
+class CircleModelV0(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # 2. Create 2 nn.Linear layers capable of handling the shapes of our data
+        self.layer_1 = nn.Linear(in_features=2, out_features=5)  # <- takes in 2 features and upscales to 5 features 
+        self.layer_2 = nn.Linear(in_features=5, out_features=1)  # <- takes in 5 features from previous layer and outputs a single feature (same shape as y)
+
+    # 3. Define a forward() method that outlines the forward pass
+    def forward(self, x):
+        return self.layer_2(self.layer_1(x))  # x -> layer_1 -> layer_2 -> output
+    
+# 4. Instantiate an instance of our model class and send it to the target device
+model_0 = CircleModelV0().to(device)
+print(model_0)
+print(next(model_0.parameters()).device)
+
+
+
