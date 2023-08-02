@@ -30,3 +30,44 @@ plt.scatter(x=X[:, 0],
             cmap=plt.cm.RdYlBu)
 plt.show()
 
+
+## 1.1 Check input and output shapes
+print(X.shape, y.shape)
+
+# View the first example of features and labels
+X_sample = X[0]
+y_sample = y[0]
+
+print(f"Values for one sample of X: {X_sample} and the same for y: {y_sample}")
+print(f"Shapes for one sample of X: {X_sample.shape} and the same for y: {y_sample.shape}")
+
+## 1.2 Turn data into tensors and create train and test splits
+
+# Turn data into tensors
+import torch
+
+X = torch.from_numpy(X).type(torch.float)
+y = torch.from_numpy(y).type(torch.float)
+
+print(X[:5], y[:5])
+print(type(X), X.dtype, y.dtype)
+
+# Split data into training and test sets
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X,
+                                                    y,
+                                                    test_size=0.2, # 0.2 = 20% of data will be test & 80% will be train
+                                                    random_state=42)
+
+print(len(X_train), len(X_test), len(y_train), len(y_test))  # <- output will be like 800, 200, 800, 200
+
+
+
+## 2. Building a model
+
+# Import PyTorch and nn
+from torch import nn
+
+# Make device agnostic code
+device = "cuda" if torch.cuda.is_available() else "cpu"
