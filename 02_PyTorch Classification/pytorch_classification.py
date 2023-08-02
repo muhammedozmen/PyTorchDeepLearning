@@ -98,9 +98,16 @@ model_0 = nn.Sequential(
 ).to(device)
 
 print(model_0) # It's overridden
+print(model_0.state_dict())
 
 
 # Make predictions
+with torch.inference_mode():
+    untrained_preds = model_0(X_test.to(device))
+print(f"Length of predictions: {len(untrained_preds)}, Shape: {untrained_preds.shape}")
+print(f"Length of test samples: {len(X_test)}, Shape: {X_test.shape}")
+print(f"\nFirst 10 predictions:\n{torch.round(untrained_preds[:10])}")
+print(f"\nFirst 10 labels:\n{y_test[:10]}")
 
 
 
