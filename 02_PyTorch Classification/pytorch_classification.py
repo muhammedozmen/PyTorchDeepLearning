@@ -156,6 +156,55 @@ y_preds.squeeze()
 
 ## 3.2 Building a training and testing loop
 
+torch.manual_seed(42)
+torch.cuda.manual_seed(42)
+
+# Set the number of epochs
+epochs = 100
+
+# Put data to target device
+X_train, y_train = X_train.to(device), y_train.to(device)
+X_test, y_test = X_test.to(device), y_test.to(device)
+
+# Build training and evaluation loop
+for epoch in range(epochs):
+    ### Training
+    model_0.train()
+
+    # 1. Forward pass
+    y_logits = model_0(X_train).squeeze()
+    y_pred = torch.round(torch.sigmoid(y_logits))  # turn logits -> pred probs -> pred labels
+
+    # 2. Calculate loss/accuracy
+
+    # loss = loss_fn(torch.sigmoid(y_logits, y_train))  ->  nn.BCELoss expects prediction probabilities as an input
+    loss = loss_fn(y_logits, y_train)  # nn.BCEWithLogitsLoss expects raw logits as input
+    acc = accuracy_fn(y_true=y_train, y_pred=y_pred)
+
+    # 3. Optimizer zero grad
+    optimizer.zero_grad()
+
+    # 4. Loss backward
+    loss.backward()
+
+    # 5. Optimizer step (gradient descent)
+    optimizer.step()
+
+    ### Testing
+    model_0.eval()
+    with torch.inference_mode():
+        # 1. Forward pass
+        test_logits = model_0(X_test).squeeze()
+        test_pred = torch.round(torch.sigmoid(test_logits))
+
+        # 2. Calculate test loss/acc
+        test_loss = loss_fn(test_logits, y_test)
+        test_acc = accuracy_fn(y_true=y_test, y_pred=test_pred)
+
+        # Print out what's happening
+        if epoch % 10 == 0:
+            print(f"Epoch: {epoch} | Loss: {loss:.f}, Acc: {acc:.2f}% | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%")
+
 
 
 
