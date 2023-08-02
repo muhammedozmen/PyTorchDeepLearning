@@ -1,4 +1,4 @@
-## 1. Make classification data and get it ready
+### 1. Make classification data and get it ready
 
 import sklearn
 from sklearn.datasets import make_circles
@@ -64,7 +64,7 @@ print(len(X_train), len(X_test), len(y_train), len(y_test))  # <- output will be
 
 
 
-## 2. Building a model
+### 2. Building a model
 
 # Import PyTorch and nn
 from torch import nn
@@ -108,6 +108,54 @@ print(f"Length of predictions: {len(untrained_preds)}, Shape: {untrained_preds.s
 print(f"Length of test samples: {len(X_test)}, Shape: {X_test.shape}")
 print(f"\nFirst 10 predictions:\n{torch.round(untrained_preds[:10])}")
 print(f"\nFirst 10 labels:\n{y_test[:10]}")
+
+
+## 2.1 Setup loss function and optimizer
+
+# Setup the loss function
+
+# loss_fn = nn.BCELoss() -> BCELoss = requires inputs to have gone through the sigmoid activation function prior to input to BCELoss
+loss_fn = nn.BCEWithLogitsLoss() # BCEWithLogitsLoss = sigmoid activation function built-in
+
+# Setup the optimizer
+optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.1)
+
+# Calculate accuracy - out of 100 examples, what percentage does our model get right?
+def accuracy_fn(y_true, y_pred):
+    correct = torch.eq(y_true, y_pred).sum().item()
+    acc = (correct/len(y_pred)) * 100
+    return acc
+
+
+
+### 3. Train model
+
+## 3.1 Going from raw logits -> prediction probabilities -> prediction labels
+
+# View the first 5 outputs of the forward pass on the test data
+model_0.eval()
+with torch.inference_mode():
+    y_logits = model_0(X_test.to(device))[:5]
+print(y_logits)
+
+# Use the sigmoid activation function on our model logits to turn them into prediction probabilities
+y_pred_probs = torch.sigmoid(y_logits)
+print(torch.round(y_pred_probs))
+
+# Find the predicted labels 
+y_preds = torch.round(y_pred_probs)
+
+# In full (logits -> pred probs -> pred labels)
+y_pred_labels = torch.round(torch.sigmoid(model_0(X_test.to(device))[:5]))
+
+# Check for equality
+print(torch.eq(y_preds.squeeze(), y_pred_labels.squeeze()))
+
+# Get rid of extra dimension
+y_preds.squeeze()
+
+## 3.2 Building a training and testing loop
+
 
 
 
