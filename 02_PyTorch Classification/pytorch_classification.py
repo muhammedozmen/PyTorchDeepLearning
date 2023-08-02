@@ -91,4 +91,16 @@ print(model_0)
 print(next(model_0.parameters()).device)
 
 
+# Let's replicate the model above using nn.Sequential()
+model_0 = nn.Sequential(
+    nn.Linear(in_features=2, out_features=5),
+    nn.Linear(in_features=5, out_features=1)
+).to(device)
+
+print(model_0) # It's overridden
+
+
+# Make predictions
+
+
 
