@@ -237,6 +237,29 @@ plt.show()
 
 
 
+### Improving a model
+
+# Let's try and improve our model by:
+# * Adding more hidden units: 5 -> 10
+# * Increase the number of layers: 2 -> 3
+# * Increase the number of epochs: 100 -> 1000
+class CircleModelV1(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer_1 = nn.Linear(in_features=2, out_features=10)
+        self.layer_2 = nn.Linear(in_features=10, out_features=10)
+        self.layer_3 = nn.Linear(in_features=10, out_features=1)
+
+    def forward(self, x):
+        # z = self.layer_1(x)
+        # z = self.layer_2(z)
+        # z = self.layer_3(z)
+        return self.layer_3(self.layer_2(self.layer_1(x))) # this way of writing operations leverages speed ups where possible behind the scenes
+    
+model_1 = CircleModelV1().to(device)
+print(model_1)
+
+
 
 
 
