@@ -323,6 +323,33 @@ plt.tight_layout()
 plt.show()
 
 
+## 5.7 Preparing data to see if our model can fit a straight line
+
+# Create some data 
+weight = 0.7
+bias = 0.3
+start = 0
+end = 1
+step = 0.01
+
+# Create data
+X_regression = torch.arange(start, end, step).unsqueeze(dim=1)
+y_regression = weight * X_regression + bias # Linear regression formula (without epsilon)
+
+# Check the data
+print(len(X_regression))
+print(X_regression[:5], y_regression[:5])
+
+# Create train and test splits
+train_split = int(0.8 * len(X_regression))
+X_train_regression, y_train_regression = X_regression[:train_split], y_regression[:train_split]
+X_test_regression, y_test_regression = X_regression[train_split:], y_regression[train_split:]
+
+# Check the lengths of each
+print(len(X_train_regression), len(X_test_regression), len(y_train_regression), len(y_test_regression))
+
+plot_predictions(train_data=X_train_regression, train_labels=y_train_regression, test_data=X_test_regression, test_labels=y_test_regression)
+plt.show()
 
 
 
