@@ -237,9 +237,9 @@ plt.show()
 
 
 
-### Improving a model
+### 5. Improving a model
 
-# Let's try and improve our model by:
+## Let's try and improve our model by:
 # * Adding more hidden units: 5 -> 10
 # * Increase the number of layers: 2 -> 3
 # * Increase the number of epochs: 100 -> 1000
@@ -258,6 +258,72 @@ class CircleModelV1(nn.Module):
     
 model_1 = CircleModelV1().to(device)
 print(model_1)
+
+
+## 5.1 Create a loss function
+loss_fn = nn.BCEWithLogitsLoss()
+
+## 5.2 Create an optimizer
+optimizer = torch.optim.SGD(params=model_1.parameters(), lr=0.1)
+
+## 5.3 Write a training and evaluation loop for model_1
+torch.manual_seed(42)
+torch.cuda.manual_seed(42)
+
+# Train for longer
+epochs = 1000
+
+# Put data on the target device
+X_train, y_train = X_train.to(device), y_train.to(device)
+X_test, y_test = X_test.to(device), y_test.to(device)
+
+for epoch in range(epochs):
+    ## 5.4 Training
+    model_1.train()
+    # 1. Forward pass
+    y_logits = model_1(X_train).squeeze()
+    y_pred = torch.round(torch.sigmoid(y_logits)) # logits -> pred probabilities -> prediction labels
+
+    # 2. Calculate the loss/acc
+    loss = loss_fn(y_logits, y_train)
+    acc = accuracy_fn(y_true=y_train, y_pred=y_pred)
+
+    # 3. Optimizer zero grad
+    optimizer.zero_grad()
+
+    # 4. Loss backwards
+    loss.backward()
+
+    # 5. Optimizer step (gradient descent)
+    optimizer.step()
+
+    ## 5.5 Testing
+    model_1.eval()
+    with torch.inference_mode():
+        # 1. Forward pass
+        test_logits = model_1(X_test).squeeze()
+        test_pred = torch.round(torch.sigmoid(test_logits))
+        # 2. Calculate loss/acc
+        test_loss = loss_fn(test_logits, y_test)
+        test_acc = accuracy_fn(y_true=y_test, y_pred=test_pred)
+        
+    ## 5.6 Print out what's happening
+    if epoch % 100 == 0:
+        print(f"Epoch: {epoch} | Loss: {loss:.5f}, Acc: {acc:.2f}% | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%")
+
+# Plot decision boundary of the model
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.title("Train")
+plot_decision_boundary(model_1, X_train, y_train)
+plt.subplot(1, 2, 2)
+plt.title("Test")
+plot_decision_boundary(model_1, X_test, y_test)
+plt.tight_layout()
+plt.show()
+
+
+
 
 
 
