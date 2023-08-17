@@ -352,6 +352,64 @@ plot_predictions(train_data=X_train_regression, train_labels=y_train_regression,
 plt.show()
 
 
+## 5.8 Adjusting 'model_1' to fit a straight line
+
+# Same architecture as model_1 (but using nn.Sequential())
+model_2 = nn.Sequential(nn.Linear(in_features=1, out_features=10), nn.Linear(in_features=10, out_features=10), nn.Linear(in_features=10, out_features=1)).to(device)
+
+# Loss and optimizer
+loss_fn = nn.L1Loss() # MAE loss with regression data
+optimizer = torch.optim.SGD(params=model_2.parameters(), lr=0.01)
+
+# Train the model
+torch.manual_seed(42)
+torch.cuda.manual_seed(42)
+
+# Set the number of epochs
+epochs = 1000
+
+# Put the data on the target device
+X_train_regression, y_train_regression = X_train_regression.to(device), y_train_regression.to(device)
+X_test_regression, y_test_regression = X_test_regression.to(device), y_test_regression.to(device)
+
+# Training
+for epoch in range(epochs):
+    y_pred = model_2(X_train_regression)
+    loss = loss_fn(y_pred, y_train_regression)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    # Testing
+    model_2.eval()
+    with torch.inference_mode():
+        test_pred = model_2(X_test_regression)
+        test_loss = loss_fn(test_pred, y_test_regression)
+
+    # Print out what's happening
+    if epoch % 100 == 0:
+        print(f"Epoch: {epoch} | Loss: {loss:.5f} | Test loss: {test_loss:.5f}")
+
+
+# Turn on evaluation mode
+model_2.eval()
+
+# Make predictions (inference)
+with torch.inference_mode():
+    y_preds = model_2(X_test_regression)
+
+# Plot data and predictions
+plot_predictions(train_data=X_train_regression.cpu(), train_labels=y_train_regression.cpu(), test_data=X_test_regression.cpu(), test_labels=y_test_regression.cpu(), predictions=y_preds.cpu())
+plt.show()
+
+
+
+### The missing piece: non-linearity
+
+
+
+
+
 
 
 
