@@ -561,6 +561,7 @@ plt.show()
 
 
 
+
 ### 8. Putting it all together with a multi-class classification problem
 
 ## 8.1 Creating a toy multi-class dataset
@@ -594,6 +595,44 @@ X_blob_train, X_blob_test, y_blob_train, y_blob_test = train_test_split(X_blob, 
 plt.figure(figsize=(10, 7))
 plt.scatter(X_blob[:, 0], X_blob[:, 1], c=y_blob, cmap=plt.cm.RdYlBu)
 plt.show()
+
+
+## 8.2 Building a multi-class classification model in PyTorch
+
+# Create device agnostic code
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(device)
+
+# Build a multi-class classification model
+class BlobModel(nn.Module):
+    def __init__(self, input_features, output_features, hidden_units=8):
+        """Initializes multi-class classification model
+
+        Args:
+        input features (int): Number of input features to the model
+        output_features (int): Number of output features (number of output classes)
+        hidden_units (int): Number of hidden units between layers, default=8
+
+        Returns:
+
+        Example:
+        """
+        super().__init__()
+        self.linear_layer_stack = nn.Sequential(
+            nn.Linear(in_features=input_features, out_features=hidden_units),
+            #nn.ReLU(),
+            nn.Linear(in_features=hidden_units, out_features=hidden_units),
+            #nn.ReLU(),
+            nn.Linear(in_features=hidden_units, out_features=output_features)
+        )
+
+    def forward(self, x):
+        return self.linear_layer_stack(x)
+
+# Create an instance of BlobModel and send it to the target device
+model_4 = BlobModel(input_features=2, output_features=4, hidden_units=8).to(device)
+print(model_4)
+
 
 
 
