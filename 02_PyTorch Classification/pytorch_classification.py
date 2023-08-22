@@ -528,6 +528,39 @@ plt.show()
 
 ### Replicating non-linear activation functions
 
+# Create a tensor
+A = torch.arange(-10, 10, 1, dtype=torch.float32)
+print(A.dtype)
+
+# Visualize the tensor
+plt.plot(A)
+plt.show()
+
+
+# Replicate the ReLU Activation function
+def relu(x: torch.Tensor) -> torch.Tensor:
+    return torch.maximum(torch.tensor(0), x) # inputs must be tensors
+print(relu(A))
+
+# Plot ReLU activation function
+plt.plot(torch.relu(A))
+plt.show()
+plt.plot(relu(A))
+plt.show()
+
+
+# Let's do the same for Sigmoid function
+def sigmoid(x):
+    return 1 / (1 + torch.exp(-x))
+
+plt.plot(torch.sigmoid(A))
+plt.show()
+plt.plot(sigmoid(A))
+plt.show()
+
+
+
+
 
 
 
