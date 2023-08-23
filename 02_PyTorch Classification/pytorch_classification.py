@@ -586,7 +586,7 @@ X_blob, y_blob = make_blobs(n_samples=1000,
 
 # 2. Turn data into tensors
 X_blob = torch.from_numpy(X_blob).type(torch.float)
-y_blob = torch.from_numpy(y_blob).type(torch.float)
+y_blob = torch.from_numpy(y_blob).type(torch.LongTensor)
 
 # 3. Split into train and test
 X_blob_train, X_blob_test, y_blob_train, y_blob_test = train_test_split(X_blob, y_blob, test_size=0.2, random_state=RANDOM_SEED)
@@ -663,6 +663,79 @@ print(y_blob_test)
 
 
 ## 8.5 Creating a training loop and testing loop for a multi-class PyTorch model
+
+# Fit the multi-class model to the data
+torch.manual_seed(42)
+torch.cuda.manual_seed(42)
+
+# Set number of epochs
+epochs = 100
+
+# Put data to the target device
+X_blob_train, y_blob_train = X_blob_train.to(device), y_blob_train.to(device)
+X_blob_test, y_blob_test = X_blob_test.to(device), y_blob_test.to(device)
+
+# Loop throught data
+for epoch in range(epochs):
+    ### Training
+    model_4.train()
+
+    y_logits = model_4(X_blob_train)
+    y_pred = torch.softmax(y_logits, dim=1).argmax(dim=1)
+
+    loss = loss_fn(y_logits, y_blob_train)
+    acc = accuracy_fn(y_true=y_blob_train, y_pred=y_pred)
+
+    optimizer.zero_grad()
+    
+    loss.backward()
+    
+    optimizer.step()
+
+    ### Testing
+    model_4.eval()
+    with torch.inference_mode():
+        test_logits = model_4(X_blob_test)
+        test_preds = torch.softmax(test_logits, dim=1).argmax(dim=1)
+
+        test_loss = loss_fn(test_logits, y_blob_test)
+        test_acc = accuracy_fn(y_true=y_blob_test, y_pred=test_preds)
+
+    # Print out what's happening
+    if epoch % 10 == 0:
+        print(f"Epoch: {epoch} | Loss: {loss:.4f}, Acc: {acc:.2f}% | Test loss: {test_loss:.4f}, Test acc: {test_acc:.2f}%")
+
+
+
+## 8.6 Making and evaluating predictions with a PyTorch mutli-class model
+
+# Make predictions
+model_4.eval()
+with torch.inference_mode():
+    y_logits = model_4(X_blob_test)
+
+# View the first 10 predictions
+print(y_logits[:10])
+
+# Go from logits -> Prediction probabilities
+y_pred_probs = torch.softmax(y_logits, dim=1)
+print(y_pred_probs[:10])
+
+# Go from pred probs to pred labels
+y_preds = torch.argmax(y_pred_probs, dim=1)
+print(y_preds[:10])
+
+
+plt.figure(figsize=(12, 6))
+plt.subplot(1, 2, 1)
+plt.title("Train")
+plot_decision_boundary(model_4, X_blob_train, y_blob_train)
+plt.subplot(1, 2, 2)
+plt.title("Test")
+plot_decision_boundary(model_4, X_blob_test, y_blob_test)
+plt.tight_layout()
+plt.show()
+
 
 
 
