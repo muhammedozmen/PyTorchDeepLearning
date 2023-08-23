@@ -737,7 +737,15 @@ plt.tight_layout()
 plt.show()
 
 
+### 9. A few more classification metrics (to evaluate our classification model)
 
+from torchmetrics import Accuracy
+
+# Setup metric 
+torchmetric_accuracy = Accuracy().to(device)
+
+# Calculate accuracy 
+print(torchmetric_accuracy(y_preds, y_blob_test))
 
 
 
