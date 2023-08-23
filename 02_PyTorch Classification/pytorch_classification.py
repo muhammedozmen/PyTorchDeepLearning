@@ -634,6 +634,17 @@ model_4 = BlobModel(input_features=2, output_features=4, hidden_units=8).to(devi
 print(model_4)
 
 
+## 8.3 Create a loss function an optimizer for a multi-class classification model
+
+# Create a loss function for multi-class classification
+loss_fn = nn.CrossEntropyLoss()
+
+# Create an optimizer for multi-class classification
+optimizer = torch.optim.SGD(params=model_4.parameters(), lr=0.1) # learning rate is a hyperparameter that you can change
+
+## 8.4 Getting prediction probabilites for a multi-class PyTorch model
+
+
 
 
 
