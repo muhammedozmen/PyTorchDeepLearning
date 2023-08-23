@@ -636,14 +636,33 @@ print(model_4)
 
 ## 8.3 Create a loss function an optimizer for a multi-class classification model
 
-# Create a loss function for multi-class classification
+# Create a loss function for multi-class classification -> loss function measures how wrong our model's predictions are
 loss_fn = nn.CrossEntropyLoss()
 
-# Create an optimizer for multi-class classification
+# Create an optimizer for multi-class classification -> optimizer updates our model parameters to try and reduce the loss
 optimizer = torch.optim.SGD(params=model_4.parameters(), lr=0.1) # learning rate is a hyperparameter that you can change
 
 ## 8.4 Getting prediction probabilites for a multi-class PyTorch model
 
+# Let's get some raw outputs of our model (logits)
+model_4.eval()
+with torch.inference_mode():
+    y_logits = model_4(X_blob_test.to(device))
+print(y_logits[:10])
+print(y_blob_test[:10])
+
+# Convert our model's logit outputs to prediction probabilities
+y_pred_probs = torch.softmax(y_logits, dim=1)
+print(y_logits[:5])
+print(y_pred_probs[:5])
+
+# Convert our model's prediction probabilities to prediction labels
+y_preds = torch.argmax(y_pred_probs, dim=1)
+print(y_preds)
+print(y_blob_test)
+
+
+## 8.5 Creating a training loop and testing loop for a multi-class PyTorch model
 
 
 
