@@ -86,3 +86,42 @@ for i in range(1, rows*cols+1):
     plt.tight_layout()
     
 plt.show()
+
+
+
+## 2. Prepare DataLoader
+from torch.utils.data import DataLoader
+
+# Setup the batch size hyperparameter
+BATCH_SIZE = 32
+
+# Turn datasets into iterables (batches)
+train_dataloader = DataLoader(dataset=train_data,
+                              batch_size=BATCH_SIZE,
+                              shuffle=True)
+
+test_dataloader = DataLoader(dataset=test_data,
+                             batch_size=BATCH_SIZE,
+                             shuffle=False)
+
+print(train_dataloader, test_dataloader)
+
+# Let's check out what we've created
+print(f"DataLoaders: {train_dataloader, test_dataloader}")
+print(f"Length of train_dataloader: {len(train_dataloader)} batches of {BATCH_SIZE}...")
+print(f"Length of test_dataloader: {len(test_dataloader)} batches of {BATCH_SIZE}...")
+
+# Check out what's inside the training dataloader
+train_features_batch, train_labels_batch = next(iter(train_dataloader))
+print(train_features_batch.shape, train_labels_batch.shape)
+
+# Show a sample
+torch.manual_seed(42)
+random_idx = torch.randint(0, len(train_features_batch), size=[1]).item()
+img, label = train_features_batch[random_idx], train_labels_batch[random_idx]
+plt.imshow(img.squeeze(), cmap="gray")
+plt.title(class_names[label])
+plt.axis(False)
+plt.show()
+print(f"Image size: {img.shape}")
+print(f"Label: {label}, Label size: {label.shape}")
