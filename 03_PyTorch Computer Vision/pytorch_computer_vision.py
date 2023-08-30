@@ -125,3 +125,52 @@ plt.axis(False)
 plt.show()
 print(f"Image size: {img.shape}")
 print(f"Label: {label}, Label size: {label.shape}")
+
+
+
+## 3. Model 0: Baseline model
+
+# Create a flatten layer
+flatten_model = nn.Flatten()
+
+# Get a single sample
+x = train_features_batch[0]
+
+# Flatten the sample
+output = flatten_model(x) # perform forward pass
+
+# Print out what happened
+print(f"Shape before flattening: {x.shape}") # -> [color_channels, height, width]
+print(f"Shape after flattening: {output.shape}") # -> [color_channels, height*width]
+
+from torch import nn
+class FashionMNISTModelV0(nn.Module):
+    def __init__(self,
+                 input_shape: int,
+                 hidden_units: int,
+                 output_shape: int):
+        super().__init__()
+        self.layer_stack = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features=input_shape,
+                      out_features=hidden_units),
+            nn.Linear(in_features=hidden_units,
+                      out_features=output_shape)
+        )
+
+    def forward(self, x):
+        return self.layer_stack(x)
+    
+
+torch.manual_seed(42)
+
+# Setup model with input parameters
+model_0 = FashionMNISTModelV0(input_shape=784, # this is 28x28
+                              hidden_units=10, # how many units in the hidden layer
+                              output_shape=len(class_names) # one for every class
+                              ).to("cpu")
+        
+print(model_0)
+
+dummy_x = torch.rand([1, 1, 28, 28])
+model_0(dummy_x)
