@@ -210,3 +210,77 @@ def print_train_time(start: float,
     print(f"Train time on {device}: {total_time:.3f} seconds")
     return total_time
 
+
+## 3.3 Creating a training loop and training a model on batches of data
+
+# Import tqdm for progress bar
+from tqdm.auto import tqdm
+
+# Set the seed and start the timer
+torch.manual_seed(42)
+train_time_start_on_cpu = timer()
+
+# Set the number of epochs (we'll keep this small for faster training time)
+epochs = 3
+
+# Create training and test loop
+for epoch in tqdm(range(epochs)):
+    print(f"Epoch: {epoch} \n------")
+    ### Training
+    train_loss = 0
+    # Add a loop to loop through the training batches
+    for batch, (X, y) in enumerate(train_dataloader):
+        model_0.train()
+        # 1. Forward pass
+        y_pred = model_0(X)
+
+        # 2. Calculate the loss (per batch)
+        loss = loss_fn(y_pred, y)
+        train_loss += loss # accumulate train loss
+
+        # 3. Optimizer zero grad
+        optimizer.zero_grad()
+
+        # 4. Loss backward
+        loss.backward()
+
+        # 5. Optimizer step
+        optimizer.step()
+
+        # Print out what's happening
+        if batch % 400 == 0:
+            print(f"Looked at {batch * len(X)} / {len(train_dataloader.dataset)} samples")
+
+    # Divide total train loss by length of train dataloader
+    train_loss /= len(train_dataloader)
+
+
+    ### Testing
+    test_loss, test_acc = 0, 0
+    model_0.eval()
+    with torch.inference_mode():
+        for X_test, y_test in test_dataloader:
+            # 1. Forward pass
+            test_pred = model_0(X_test)
+
+            # 2. Calculate the loss (accumulatively)
+            test_loss += loss_fn(test_pred, y_test)
+
+            # 3. Calculate the accuracy
+            test_acc += accuracy_fn(y_true=y_test, y_pred=test_pred.argmax(dim=1))
+
+        # Calculate the the test loss average per batch
+        test_loss /= len(test_dataloader)
+
+        # Calculate the test acc average per batch
+        test_acc /= len(test_dataloader)
+
+    # Print out what's happening
+    print(f"\nTrain loss: {train_loss:.4f} | Test loss: {test_loss:.4f}, Test acc: {test_acc:.4f}")
+
+# Calculate the training time
+train_time_end_on_cpu = timer()
+total_train_time_model_0 = print_train_time(start=train_time_start_on_cpu,
+                                            end=train_time_end_on_cpu,
+                                            device=str(next(model_0.parameters()).device))
+
