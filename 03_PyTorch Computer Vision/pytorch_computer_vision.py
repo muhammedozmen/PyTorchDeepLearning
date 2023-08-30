@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 
-## 1. Getting a dataset
+### 1. Getting a dataset
 
 # Setup training data
 from torchvision import datasets
@@ -89,7 +89,7 @@ plt.show()
 
 
 
-## 2. Prepare DataLoader
+### 2. Prepare DataLoader
 from torch.utils.data import DataLoader
 
 # Setup the batch size hyperparameter
@@ -128,7 +128,8 @@ print(f"Label: {label}, Label size: {label.shape}")
 
 
 
-## 3. Model 0: Baseline model
+
+### 3. Model 0: Baseline model
 
 # Create a flatten layer
 flatten_model = nn.Flatten()
@@ -174,3 +175,25 @@ print(model_0)
 
 dummy_x = torch.rand([1, 1, 28, 28])
 model_0(dummy_x)
+
+
+## 3.1 Setup loss, optimizer and evaluation metrics
+import requests
+from pathlib import Path
+
+# Download helper functions from Learn PyTorch repo
+if Path("helper_functions.py").is_file():
+    print("helper_functions.py already exists, skipping download...")
+else:
+    print("Downloading helper_functions.py")
+    request = requests.get("https://raw.githubusercontent.com/mrdbourke/pytorch-deep-learning/main/helper_functions.py")
+    with open("helper_functions.py", "wb") as f:
+        f.write(request.content)
+
+# Import accuracy metric
+from helper_functions import accuracy_fn
+
+# Setup loss function and optimizer
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(params=model_0.parameters(),
+                            lr=0.1)
