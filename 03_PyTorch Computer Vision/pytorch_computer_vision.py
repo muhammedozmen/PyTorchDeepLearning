@@ -197,3 +197,4 @@ from helper_functions import accuracy_fn
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(params=model_0.parameters(),
                             lr=0.1)
+
