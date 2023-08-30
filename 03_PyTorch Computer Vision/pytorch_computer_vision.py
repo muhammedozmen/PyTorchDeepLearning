@@ -322,3 +322,11 @@ model_0_results = eval_model(model=model_0,
                              accuracy_fn=accuracy_fn)
 print(model_0_results)
 
+
+
+### 5. Setup device-agnostic code (for using GPU)
+
+# Setup device-agnostic code
+import torch
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
