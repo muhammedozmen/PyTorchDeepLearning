@@ -330,3 +330,38 @@ print(model_0_results)
 import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+
+
+
+### 6. Model 1: Building a better model with non-linearity
+
+
+# Create a model with non-linear and linear layers
+
+class FashionMNISTModelV1 (nn.Module):
+    def __init__(self,
+                 input_shape: int,
+                 hidden_units: int,
+                 output_shape: int):
+        super().__init__()
+        self.layer_stack = nn.Sequential(
+            nn.Flatten(), # flatten inputs into a single vector
+            nn.Linear(in_features=input_shape,
+                      out_features=hidden_units),
+            nn.ReLU(),
+            nn.Linear(in_features=hidden_units,
+                      out_features=output_shape),
+            nn.ReLU() 
+        )
+    
+    def forward(self, x: torch.Tensor):
+        return self.layer_stack(x)
+    
+
+# Create an instance of model_1
+torch.manual_seed(42)
+model_1 = FashionMNISTModelV1(input_shape=784, # this is the output of the flatten after our 28*28 image goes in
+                              hidden_units=10,
+                              output_shape=len(class_names)).to(device) # send to the GPU if it's available
+
+print(next(model_1.parameters()).device) # check out the device
