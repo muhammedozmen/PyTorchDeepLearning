@@ -365,3 +365,12 @@ model_1 = FashionMNISTModelV1(input_shape=784, # this is the output of the flatt
                               output_shape=len(class_names)).to(device) # send to the GPU if it's available
 
 print(next(model_1.parameters()).device) # check out the device
+
+
+
+## 6.1 Setup loss, optimizer and evaluation metrics
+
+from helper_functions import accuracy_fn
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(params=model_1.parameters(),
+                            lr=0.1)
