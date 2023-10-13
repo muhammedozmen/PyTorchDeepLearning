@@ -371,6 +371,48 @@ print(next(model_1.parameters()).device) # check out the device
 ## 6.1 Setup loss, optimizer and evaluation metrics
 
 from helper_functions import accuracy_fn
-loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(params=model_1.parameters(),
+loss_fn = nn.CrossEntropyLoss() # measure how wrong our model is
+optimizer = torch.optim.SGD(params=model_1.parameters(), # tries to update our model's parameters to reduce the loss
                             lr=0.1)
+
+
+## 6.2 Functionizing training and evaluation/testing loops
+
+def train_step(model: torch.nn.Module,
+               data_loader: torch.utils.data.DataLoader,
+               loss_fn: torch.nn.Module,
+               optimizer: torch.optim.Optimizer,
+               accuracy_fn,
+               device: torch.device = device):
+    """Performs a training with model trying to learn on data loader."""
+    train_loss, train_acc = 0, 0
+    
+    # Put model into training mode
+    model.train()
+
+    # Add a loop to loop through the training batches
+    for batch, (X, y) in enumerate(data_loader):
+        # Put data on target device
+        X, y = X.to(device), y.to(device)
+
+        # 1. Forward pass (outputs the raw logits from the model)
+        y_pred = model(X)
+
+        # 2. Calculate the loss and accuracy (per batch)
+        loss = loss_fn(y_pred, y)
+        train_loss += loss # accumulate train loss
+        train_acc += accuracy_fn(y_true=y, y_pred=y_pred.argmax(dim=1)) # go from logits -> prediction labels
+
+        # 3. Optimizer zero grad
+        optimizer.zero_grad()
+
+        # 4. Loss backward
+        loss.backward()
+
+        # 5. Optimizer step
+        optimizer.step()
+
+    # Divide total train loss by length of train dataloader
+    train_loss /= len(data_loader)
+    train_acc /= len(data_loader)
+    print(f"Train loss: {train_loss:.5f} | Train acc: {train_acc:.2f}%")
