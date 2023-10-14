@@ -449,3 +449,36 @@ def test_step(model: torch.nn.Module,
         test_loss /= len(data_loader)
         test_acc /= len(data_loader)
         print(f"Test loss: {test_loss:.5f} | Test acc: {test_acc:.2f}%\n")
+
+
+torch.manual_seed(42)
+
+# Measure time
+from timeit import default_timer as timer
+train_time_start_on_gpu = timer()
+
+# Set epochs
+epochs = 3
+
+# Create a optimization and evaluation loop using train_step() and test_step()
+for epoch in tqdm(range(epochs)):
+    print(f"Epoch: {epoch}\n----------")
+    train_step(model=model_1,
+               data_loader=train_dataloader,
+               loss_fn=loss_fn,
+               optimizer=optimizer,
+               accuracy_fn=accuracy_fn,
+               device=device)
+    test_step(model=model_1,
+              data_loader=test_dataloader,
+              loss_fn=loss_fn,
+              accuracy_fn=accuracy_fn,
+              device=device)
+    
+    train_time_end_on_gpu = timer()
+    total_train_time_model_1 = print_train_time(start=train_time_start_on_gpu,
+                                                end=train_time_end_on_gpu,
+                                                device=device)
+    
+    print(model_0_results)
+    print(total_train_time_model_0)
