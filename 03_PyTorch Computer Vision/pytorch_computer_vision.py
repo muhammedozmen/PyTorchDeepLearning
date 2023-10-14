@@ -385,6 +385,7 @@ def train_step(model: torch.nn.Module,
                accuracy_fn,
                device: torch.device = device):
     """Performs a training with model trying to learn on data loader."""
+
     train_loss, train_acc = 0, 0
     
     # Put model into training mode
@@ -416,3 +417,35 @@ def train_step(model: torch.nn.Module,
     train_loss /= len(data_loader)
     train_acc /= len(data_loader)
     print(f"Train loss: {train_loss:.5f} | Train acc: {train_acc:.2f}%")
+
+
+def test_step(model: torch.nn.Module,
+              data_loader: torch.utils.data.DataLoader,
+              loss_fn: torch.nn.Module,
+              accuracy_fn,
+              device: torch.device = device):
+    """Performs a testing loop step on model going over data_loader."""
+
+    test_loss, test_acc = 0, 0
+
+    # Put the model in eval mode
+    model.eval()
+
+    # Turn on inference mode context manager
+    with torch.inference_mode():
+        for X, y in data_loader:
+            # Send the data to the target device
+            X, y = X.to(device), y.to(device)
+
+            # 1. Forward pass
+            test_pred = model(X)
+
+            # 2. Calculate the loss/acc
+            test_loss += loss_fn(test_pred, y)
+            test_acc += accuracy_fn(y_true=y,
+                                    y_pred=test_pred.argmax(dim=1)) # go from logits -> prediction labels
+            
+        # Adjust metrics and print out
+        test_loss /= len(data_loader)
+        test_acc /= len(data_loader)
+        print(f"Test loss: {test_loss:.5f} | Test acc: {test_acc:.2f}%\n")
