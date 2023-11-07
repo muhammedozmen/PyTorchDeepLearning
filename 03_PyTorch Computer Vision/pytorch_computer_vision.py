@@ -211,7 +211,7 @@ def print_train_time(start: float,
     return total_time
 
 
-## 3.3 Creating a training loop and training a model on batches of data
+## 3.3 Creating a training loop and training a model on batches of data0
 
 # Import tqdm for progress bar
 from tqdm.auto import tqdm
